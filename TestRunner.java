@@ -1,0 +1,43 @@
+import java.util.*;
+import DataModels.*;
+import DataModels.Order;
+import DecoratorPattern.*;
+import FactoryMethodPattern.*;
+import ObserverPattern.*;
+import StrategyPattern.*;
+
+public class TestRunner {
+    public static void main(String[] args) {
+        // ... 1. Setup ...
+        Product laptop =  new Product("P001", "Laptop", 30000.0);
+        Product mouse = new Product("P002", "Mouse", 800.0)
+        Order myOrder = new Order("ORD-001", List.of(laptop,mouse), "customer@email.com");
+
+        OrderCalculator calculator = new OrderCalculator();
+        ShipmentFactory shipmentFactory = new ShipmentFactory();
+
+        OrderProcessor orderProcessor = new OrderProcessor();
+        InventoryService inventory = new InventoryService();
+        EmailService emailer = new EmailService();
+        orderProcessor.register(inventory);
+        orderProcessor.register(emailer);
+
+        System.out.println("\n--- 2. Testing Strategy Pattern (Discounts) ---");
+        double originalPrice = myOrder.getTotalPrice();
+        System.out.println("Original Price: "+ originalPrice);
+
+        DiscountStrategy tenPercentOff = new PercentageDiscount(10);
+        double priceAfterPercentage = calculator.calculateFinalPrice(myOrder, tenPercentOff);
+        System.out.println("Price with 10% dicount: "+ priceAfterPercentage);
+
+        DiscountStrategy fiveHundredOff = new FixedDiscount(500);
+        double priceAfterFixed = calculator.calculateFinalPrice(myOrder,fiveHundredOff);
+        System.out.println("Price with 10% dicount: "+ priceAfterFixed);
+
+        System.out.println("\n--- 3. Testing Factory and Decorator Pattern (Shipment) ---");
+        //สร้างการจัดส่งแบบมาตรฐาน
+        Shipment.standardShipment = shipmentFactory.createShipment("STANDARD");
+
+
+    }
+}
